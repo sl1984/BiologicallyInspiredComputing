@@ -102,6 +102,9 @@ class ArtificialNeuralNetwork():
             print ( 'ANN Layer Details: %d Neurons %d Inputs' % (self.layers[index2].config_values[0], self.layers[index2].config_values[1]))
             print (self.layers[index2].synaptic_weights)
 
+    def set_input_values(self, t_input):
+        self.training_inputs = t_input
+
 # if __name__ == "__main__":
 #
 #     random.seed(1)

@@ -4,9 +4,9 @@ from utils import *
 import random
 from sys import exit
 
-W = 0.5
-c1 = 0.8
-c2 = 0.9
+W = 0.2
+c1 = 0.5
+c2 = 0.2
 
 n_iterations = 50
 target_error = 1e-6
@@ -26,11 +26,12 @@ class Particle():
 
     def move(self):
         self.position = self.position + self.velocity
+        self.set_ann_weights()
 
     def create_ann(self):
         # Activation functions Null -> 0 , Sigmoid -> 1, Hyperbloic Tan -> 2, Cosine -> 3, Gaussian -> 4
         activation_function = 1
-        #read the file and convert as array
+        #TO-DO read the file and convert as array
         data = getDataFromFile('xyz')
         self.ann = ArtificialNeuralNetwork(self.ann_layer_config, activation_function, data[0], data[1] )
         self.set_initial_position()
@@ -40,6 +41,7 @@ class Particle():
         #pass self position values to
         self.ann.set_weights_from_position(self.position)
 
+    # Create array of random values
     def set_initial_position(self):
         init_position = []
         for layer_config in self.ann_layer_config:
@@ -48,9 +50,9 @@ class Particle():
         self.position = asarray(init_position)
         self.pbest_position = self.position
     def create_random(self):
-        return (-1) ** (bool(random.getrandbits(1))) * random.random() * 50
+        return random.random()
 
-class Space():
+class PSO_Space():
 
     def __init__(self, target, target_error, n_particles):
         self.ann_layer_config = array([[4, 3], [1, 4]])
@@ -70,7 +72,7 @@ class Space():
         self.gbest_position = asarray(init_gbest_position)
 
     def create_random(self):
-        return random.random() * 50
+        return random.random()
 
     def print_particles(self):
         for particle in self.particles:
@@ -107,21 +109,26 @@ class Space():
             particle.move()
 
 
-search_space = Space(1, target_error, n_particles)
-particles_vector = [Particle() for _ in range(search_space.n_particles)]
-search_space.particles = particles_vector
-search_space.print_particles()
+pso = PSO_Space(1, target_error, n_particles)
+particles_vector = [Particle() for _ in range(pso.n_particles)]
+pso.particles = particles_vector
+pso.print_particles()
 
 iteration = 0
 while (iteration < n_iterations):
-    search_space.feed_ann_particles()
-    search_space.set_pbest()
-    search_space.set_gbest()
+    pso.feed_ann_particles()
+    pso.set_pbest()
+    pso.set_gbest()
 
-    if (abs(search_space.gbest_value - search_space.target) <= search_space.target_error):
+    if (abs(pso.gbest_value - pso.target) <= pso.target_error):
         break
 
-    search_space.move_particles()
+    pso.move_particles()
     iteration += 1
 
-print("The best solution is: ", search_space.gbest_position, " in n_iterations: ", iteration)
+print("The best solution is: ", pso.gbest_position, " in n_iterations: ", iteration)
+
+pso.particles[0].ann.set_weights_from_position(pso.gbest_position)
+pso.particles[0].ann.set_input_values(array([1, 1, 0]))
+pso.particles[0].ann.forward_inside_ann()
+print (pso.particles[0].ann.ann_output)
