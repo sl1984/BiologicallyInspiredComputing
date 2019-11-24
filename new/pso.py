@@ -9,7 +9,7 @@ c1 = 0.5
 c2 = 0.2
 
 n_iterations = 50
-target_error = 1e-6
+target_error = 1e-4
 n_particles = 30
 
 class Particle():
@@ -18,7 +18,7 @@ class Particle():
         self.position = array([0, 0])
         self.pbest_position = self.position
         self.pbest_value = float('inf')
-        self.velocity = array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+        # Create the ANN for this particle
         self.create_ann()
 
     def __str__(self):
@@ -44,10 +44,13 @@ class Particle():
     # Create array of random values
     def set_initial_position(self):
         init_position = []
+        init_velocity = []
         for layer_config in self.ann_layer_config:
             for i in range(dot(layer_config[0],layer_config[1])):
                 init_position.append(self.create_random())
+                init_velocity.append(0)
         self.position = asarray(init_position)
+        self.velocity = asarray(init_velocity)
         self.pbest_position = self.position
     def create_random(self):
         return random.random()
@@ -95,28 +98,27 @@ class PSO_Space():
                 self.gbest_value = best_fitness_cadidate
                 self.gbest_position = particle.position
 
-    def feed_ann_particles(self):
+    def forwardfeed_particles(self):
         for particle in self.particles:
             particle.ann.forward_inside_ann()
 
     def move_particles(self):
         for particle in self.particles:
             global W
-            new_velocity = (W * particle.velocity) + (c1 * random.random()) * (
+            new_velocity = (W * particle.velocity) + (random.uniform(0.0,c1)) * (
                         particle.pbest_position - particle.position) + \
-                           (random.random() * c2) * (self.gbest_position - particle.position)
+                           (random.uniform(0.0, c2)) * (self.gbest_position - particle.position)
             particle.velocity = new_velocity
             particle.move()
 
 
 pso = PSO_Space(1, target_error, n_particles)
-particles_vector = [Particle() for _ in range(pso.n_particles)]
-pso.particles = particles_vector
-pso.print_particles()
+pso.particles = [Particle() for _ in range(pso.n_particles)]
+#pso.print_particles()
 
 iteration = 0
 while (iteration < n_iterations):
-    pso.feed_ann_particles()
+    pso.forwardfeed_particles()
     pso.set_pbest()
     pso.set_gbest()
 
@@ -128,6 +130,7 @@ while (iteration < n_iterations):
 
 print("The best solution is: ", pso.gbest_position, " in n_iterations: ", iteration)
 
+#Testing the output with the sample input
 pso.particles[0].ann.set_weights_from_position(pso.gbest_position)
 pso.particles[0].ann.set_input_values(array([1, 1, 0]))
 pso.particles[0].ann.forward_inside_ann()

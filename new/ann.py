@@ -3,7 +3,7 @@ from utils import *
 
 class NeuralLayer():
     def __init__(self, neuron_config_values):
-        self.synaptic_weights = 2 * random.random((neuron_config_values[1], neuron_config_values[0])) - 1
+        self.synaptic_weights = []
         self.config_values = neuron_config_values
 
 class ArtificialNeuralNetwork():
@@ -82,9 +82,11 @@ class ArtificialNeuralNetwork():
     def mean_square_value(self):
         sum = 0
         sample_count = len(self.ann_output)
+        print (self.ann_output)
         for i in range(sample_count):
             sum = sum + ((self.training_outputs[i] - self.ann_output[i])**2)
         self.mse = sum / sample_count
+        #print (self.mse)
 
     def process(self):
         layerOutputs = []
