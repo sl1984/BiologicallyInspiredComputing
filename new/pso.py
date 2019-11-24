@@ -2,6 +2,7 @@ from numpy import exp, array, dot, tanh, cos, asarray
 from ann import ArtificialNeuralNetwork, NeuralLayer
 from utils import *
 import random
+from sys import exit
 
 W = 0.5
 c1 = 0.8
@@ -15,10 +16,9 @@ class Particle():
     def __init__(self):
         self.ann_layer_config = array([[4, 3], [1, 4]])
         self.position = array([0, 0])
-        print (self.position)
         self.pbest_position = self.position
         self.pbest_value = float('inf')
-        self.velocity = array([0, 0])
+        self.velocity = array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
         self.create_ann()
 
     def __str__(self):
@@ -34,7 +34,6 @@ class Particle():
         data = getDataFromFile('xyz')
         self.ann = ArtificialNeuralNetwork(self.ann_layer_config, activation_function, data[0], data[1] )
         self.set_initial_position()
-        print (len(self.position))
         self.set_ann_weights()
 
     def set_ann_weights(self):
@@ -47,6 +46,7 @@ class Particle():
             for i in range(dot(layer_config[0],layer_config[1])):
                 init_position.append(self.create_random())
         self.position = asarray(init_position)
+        self.pbest_position = self.position
     def create_random(self):
         return (-1) ** (bool(random.getrandbits(1))) * random.random() * 50
 
@@ -77,8 +77,7 @@ class Space():
              particle.__str__()
 
     def fitness(self, particle):
-        #to-do mean square
-        return particle.position[0] ** 2 + particle.position[1] ** 2 + 1
+        return particle.ann.mse
 
     def set_pbest(self):
         for particle in self.particles:
@@ -93,6 +92,10 @@ class Space():
             if (self.gbest_value > best_fitness_cadidate):
                 self.gbest_value = best_fitness_cadidate
                 self.gbest_position = particle.position
+
+    def feed_ann_particles(self):
+        for particle in self.particles:
+            particle.ann.forward_inside_ann()
 
     def move_particles(self):
         for particle in self.particles:
@@ -111,6 +114,7 @@ search_space.print_particles()
 
 iteration = 0
 while (iteration < n_iterations):
+    search_space.feed_ann_particles()
     search_space.set_pbest()
     search_space.set_gbest()
 

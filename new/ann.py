@@ -10,7 +10,7 @@ class ArtificialNeuralNetwork():
     def __init__(self, ann_layer_config, act_func, train_input, train_output):
         self.layers = []
         for index in range(len(ann_layer_config)):
-            print('layer configs :', ann_layer_config[index])
+            #print('layer configs :', ann_layer_config[index])
             self.layers.append(NeuralLayer(ann_layer_config[index]))
         self.ann_layer_configs = ann_layer_config
         self.layerOutputs = []
@@ -18,6 +18,7 @@ class ArtificialNeuralNetwork():
         self.training_inputs = train_input
         self.training_outputs = train_output
         self.ann_error = []
+        self.ann_output = []
 
     # sigmoid function to normalise them between 0 and 1.
     def activation_sigmoid(self, x):
@@ -75,10 +76,15 @@ class ArtificialNeuralNetwork():
         layersCount = len(self.layers)
         layerOutputValues = []
         layerOutputValues = self.process()
-        last_layer_error = self.training_outputs - layerOutputValues[layersCount-1]
-        self.ann_error = last_layer_error
-        print ("last layer error")
-        print (last_layer_error)
+        self.ann_output = layerOutputValues[layersCount-1]
+        self.mean_square_value()
+
+    def mean_square_value(self):
+        sum = 0
+        sample_count = len(self.ann_output)
+        for i in range(sample_count):
+            sum = sum + ((self.training_outputs[i] - self.ann_output[i])**2)
+        self.mse = sum / sample_count
 
     def process(self):
         layerOutputs = []
@@ -122,11 +128,6 @@ class ArtificialNeuralNetwork():
 #
 #     # train the network
 #     ann.forward_inside_ann()
-
-
-
-
-
 
 
     #ann.print_layer_weights()
