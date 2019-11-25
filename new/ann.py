@@ -84,7 +84,7 @@ class ArtificialNeuralNetwork():
         for i in range(sample_count):
             sum = sum + ((self.training_outputs[i] - self.ann_output[i])**2)
         self.mse = sum / sample_count
-        print (self.mse)
+        #print (self.mse)
 
     def process(self):
         layerOutputs = []
