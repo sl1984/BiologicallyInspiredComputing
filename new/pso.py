@@ -15,13 +15,13 @@ pso_particles = 40
 
 #ANN (Particle Settings)
 # Note : provide ANN layer based on input.
-# For eg for data set 0,1,2 give like array([[2,1],[2,2],[1,2]])
-# For data set 3 & 4 give like array([[2,2],[3,2],[1,3]])
-ann_layer_config = array([[2,1],[2,2],[1,2]])
+# For eg for data set 0,1,2,3 give like array([[2,1],[2,2],[1,2]])
+# For data set 4 & 5 give like array([[2,2],[3,2],[1,3]])
+ann_layer_config = array([[2,2],[3,2],[1,3]])
 # Activation functions Null -> 0 , Sigmoid -> 1, Hyperbloic Tan -> 2, Cosine -> 3, Gaussian -> 4
 activation_function = 1
 # Data set file cubic -> 0 , linear -> 1, sine -> 2, tanh -> 3, complex -> 4, xor -> 5
-data_set = 1
+data_set = 4
 
 class Particle():
     def __init__(self):
