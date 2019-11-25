@@ -23,6 +23,7 @@ activation_function = 4
 # Data set file cubic -> 0 , linear -> 1, sine -> 2, tanh -> 3, complex -> 4, xor -> 5
 data_set = 4
 
+#Particle class to keep the ANN details
 class Particle():
     def __init__(self):
         self.ann_layer_config = ann_layer_config
@@ -35,20 +36,20 @@ class Particle():
     def __str__(self):
         print("I am at ", self.position, " meu pbest is ", self.pbest_position)
 
+    #Adjust the postions (weights of particle)
     def move(self):
         self.position = self.position + dot(jp,self.velocity)
         self.set_ann_weights()
 
+    #Create ANN with given configs and training data
     def create_ann(self):
-        #TO-DO read the file and convert as array
         data = getDataFromFile(data_set)
-        #print (data[0])
         self.ann = ArtificialNeuralNetwork(self.ann_layer_config, activation_function, data[0], data[1] )
         self.set_initial_position()
         self.set_ann_weights()
 
+    #Pass self position values to ANN to set weights
     def set_ann_weights(self):
-        #pass self position values to
         self.ann.set_weights_from_position(self.position)
 
     # Create array of random values
@@ -61,7 +62,9 @@ class Particle():
                 init_velocity.append(0)
         self.position = asarray(init_position)
         self.velocity = asarray(init_velocity)
+        #Keep the same random as initial personal best value
         self.pbest_position = self.position
+
     def create_random(self):
         return random.uniform(-100,100)
 
@@ -77,6 +80,7 @@ class PSO_Space():
         self.gbest_position = array([0,0])
         self.set_initial_gbest_position()
 
+    #Set initial random global best values
     def set_initial_gbest_position(self):
         init_gbest_position = []
         for layer_config in self.ann_layer_config:
@@ -87,13 +91,11 @@ class PSO_Space():
     def create_random(self):
         return random.uniform(-100,100)
 
-    def print_particles(self):
-        for particle in self.particles:
-             particle.__str__()
-
+    #Fitness function returns the MSE value of particle
     def fitness_func(self, particle):
         return particle.ann.mse
 
+    #Find and set personal best position values based on MSE
     def set_personal_best(self):
         for particle in self.particles:
             fitness_value = self.fitness_func(particle)
@@ -101,6 +103,7 @@ class PSO_Space():
                 particle.pbest_value = fitness_value
                 particle.pbest_position = particle.position
 
+    #Find and set global best position values based on MSE
     def set_global_best(self):
         for particle in self.particles:
             best_fitness_value = self.fitness_func(particle)
@@ -108,11 +111,13 @@ class PSO_Space():
                 self.gbest_value = best_fitness_value
                 self.gbest_position = particle.position
 
+    #Forward the ANN with training input
     def forwardfeed_particles(self):
         for particle in self.particles:
             particle.ann.forward_inside_ann()
 
-    def move_particles(self):
+    #Adjust the particles position
+    def adjust_particles(self):
         for particle in self.particles:
             new_velocity = (vp * particle.velocity) + (random.uniform(0.0,pbp)) * (
                         particle.pbest_position - particle.position) + \
@@ -120,10 +125,10 @@ class PSO_Space():
             particle.velocity = new_velocity
             particle.move()
 
-
+#Create PSO
 pso = PSO_Space(1, target_error, pso_particles)
+#Set particles for the PSO
 pso.particles = [Particle() for _ in range(pso.pso_particles)]
-#pso.print_particles()
 
 iteration = 0
 while (iteration < pso_iterations):
@@ -134,7 +139,7 @@ while (iteration < pso_iterations):
     if (abs(pso.gbest_value - pso.target) <= pso.target_error):
         break
 
-    pso.move_particles()
+    pso.adjust_particles()
     iteration += 1
     if(iteration == 1):
         print("Initial MSE", pso.particles[0].ann.mse, " and weights for first particle", pso.particles[0].position)
