@@ -1,4 +1,5 @@
 from numpy import array, asarray
+import random
 
 def getDataFromFile(data_set_name):
 
@@ -36,8 +37,5 @@ def getDataFromFile(data_set_name):
     tso = (array([training_set_outputs])).T
     f.close()
     return tsi, tso
-    # training set input values
-    #training_set_inputs = array([[0, 0, 1], [0, 1, 1], [1, 0, 1], [0, 1, 0], [1, 0, 0], [1, 1, 1], [0, 0, 0]])
-    # training set output values
-    #training_set_outputs = array([[0, 1, 1, 1, 1, 0, 0]]).T
-    #return training_set_inputs, training_set_outputs
+
+

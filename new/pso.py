@@ -5,11 +5,11 @@ import random
 from sys import exit
 
 vp = 0.5 #velocity proportion
-pbp = 0.9 #personal best proportion
+pbp = 0.2 #personal best proportion
 gbp = 0.1 # global best proportion
 jp = 0.05 # velocity jump size
 
-pso_iterations = 500
+pso_iterations = 100
 target_error = 1e-6
 pso_particles = 40
 
@@ -17,11 +17,11 @@ pso_particles = 40
 # Note : provide ANN layer based on input.
 # For eg for data set 0,1,2,3 give like array([[2,1],[2,2],[1,2]])
 # For data set 4 & 5 give like array([[2,2],[3,2],[1,3]])
-ann_layer_config = array([[2,1],[2,2],[1,2]])
+ann_layer_config = array([[2,2],[2,2],[1,2]])
 # Activation functions Null -> 0 , Sigmoid -> 1, Hyperbloic Tan -> 2, Cosine -> 3, Gaussian -> 4
-activation_function = 1
+activation_function = 4
 # Data set file cubic -> 0 , linear -> 1, sine -> 2, tanh -> 3, complex -> 4, xor -> 5
-data_set = 1
+data_set = 4
 
 class Particle():
     def __init__(self):
@@ -36,7 +36,7 @@ class Particle():
         print("I am at ", self.position, " meu pbest is ", self.pbest_position)
 
     def move(self):
-        self.position = self.position + self.velocity
+        self.position = self.position + dot(jp,self.velocity)
         self.set_ann_weights()
 
     def create_ann(self):

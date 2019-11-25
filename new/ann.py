@@ -104,36 +104,3 @@ class ArtificialNeuralNetwork():
 
     def set_input_values(self, t_input):
         self.training_inputs = t_input
-
-# if __name__ == "__main__":
-#
-#     random.seed(1)
-#     #ann_layer_config = array([[4, 3], [3, 4], [2, 3], [1, 2]])
-#     ann_layer_config = [[4, 3], [1, 4]]
-#     # Activation functions
-#     # Null -> 0
-#     # Sigmoid -> 1
-#     # Hyperbloic Tan -> 2
-#     # Cosine -> 3
-#     # Gaussian -> 4
-#
-#     activation_function = 1
-#     data = getDataFromFile('xyz')
-#     position =  []
-#     for i in range(16):
-#         position.append(random.uniform(0,1))
-#     print (position)
-#     position1 = position
-#     # Create neural network
-#     ann =  ArtificialNeuralNetwork(ann_layer_config, activation_function, data[0], data[1])
-#     ann.set_weights_from_position(position)
-#     ann.print_layer_weights()
-#
-#     # train the network
-#     ann.forward_inside_ann()
-
-
-    #ann.print_layer_weights()
-    # Test the neural network with a new input.
-    #op = ann.process(array([1, 1, 0]))
-    #print ("Output with the trained ANN [1, 1, 0] -> : %f" % op[-1])
