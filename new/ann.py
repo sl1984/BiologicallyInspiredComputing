@@ -10,7 +10,6 @@ class ArtificialNeuralNetwork():
     def __init__(self, ann_layer_config, act_func, train_input, train_output):
         self.layers = []
         for index in range(len(ann_layer_config)):
-            #print('layer configs :', ann_layer_config[index])
             self.layers.append(NeuralLayer(ann_layer_config[index]))
         self.ann_layer_configs = ann_layer_config
         self.layerOutputs = []
@@ -82,17 +81,16 @@ class ArtificialNeuralNetwork():
     def mean_square_value(self):
         sum = 0
         sample_count = len(self.ann_output)
-        print (self.ann_output)
         for i in range(sample_count):
             sum = sum + ((self.training_outputs[i] - self.ann_output[i])**2)
         self.mse = sum / sample_count
-        #print (self.mse)
+        print (self.mse)
 
     def process(self):
         layerOutputs = []
         inputs = self.training_inputs
         for index1 in range(len(self.layers)):
-            layerOutput = []
+            #layerOutput = []
             layerOutput = self.activation_function_call(dot(inputs, self.layers[index1].synaptic_weights))
             inputs = layerOutput
             layerOutputs.append(layerOutput)
